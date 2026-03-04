@@ -13,12 +13,15 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import ToolsWrapper from "@/components/wrappers/ToolsWrapper";
+import { Checkbox } from "@/components/ui/checkbox";
 
 export default function CaesarCipher() {
   const [inputText, setInputText] = useState("");
   const [shift, setShift] = useState(3);
   const [copiedEncoded, setCopiedEncoded] = useState(false);
   const [copiedDecoded, setCopiedDecoded] = useState(false);
+  const [keepCapitalization, setKeepCapitalization] = useState(true);
+  const [keepPunctuation, setKeepPunctuation] = useState(true);
 
   // Caesar cipher encoding function
   const caesarShift = (text: string, shiftAmount: number): string => {
@@ -34,10 +37,17 @@ export default function CaesarCipher() {
           const charCode = char.charCodeAt(0);
           // Add 26 before modulo to handle negative shifts correctly
           const shifted = ((charCode - base + shiftAmount + 26) % 26) + base;
-          return String.fromCharCode(shifted);
+          let result = String.fromCharCode(shifted);
+
+          // Apply capitalization option
+          if (!keepCapitalization) {
+            result = result.toLowerCase();
+          }
+
+          return result;
         }
-        // Keep non-letters unchanged
-        return char;
+        // Keep or remove non-letters based on option
+        return keepPunctuation ? char : "";
       })
       .join("");
   };
@@ -45,12 +55,12 @@ export default function CaesarCipher() {
   // Compute encoded text
   const encoded = useMemo(() => {
     return caesarShift(inputText, shift);
-  }, [inputText, shift]);
+  }, [inputText, shift, caesarShift]);
 
   // Compute decoded text (negative shift)
   const decoded = useMemo(() => {
     return caesarShift(inputText, -shift);
-  }, [inputText, shift]);
+  }, [inputText, shift, caesarShift]);
 
   // Brute force - generate all possible shifts
   const bruteForceResults = useMemo(() => {
@@ -62,7 +72,7 @@ export default function CaesarCipher() {
         result: caesarShift(inputText, -shiftAmount),
       };
     });
-  }, [inputText]);
+  }, [inputText, caesarShift]);
 
   // Copy to clipboard function
   const copyToClipboard = useCallback(
@@ -142,6 +152,40 @@ export default function CaesarCipher() {
                   }}
                   className="w-full"
                 />
+              </div>
+
+              {/* Options */}
+              <div className="space-y-3 border-t pt-4">
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="keep-caps"
+                    checked={keepCapitalization}
+                    onCheckedChange={(checked) =>
+                      setKeepCapitalization(checked === true)
+                    }
+                  />
+                  <Label
+                    htmlFor="keep-caps"
+                    className="cursor-pointer text-sm font-normal"
+                  >
+                    Keep Capitalization
+                  </Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="keep-punct"
+                    checked={keepPunctuation}
+                    onCheckedChange={(checked) =>
+                      setKeepPunctuation(checked === true)
+                    }
+                  />
+                  <Label
+                    htmlFor="keep-punct"
+                    className="cursor-pointer text-sm font-normal"
+                  >
+                    Keep Punctuation & Spaces
+                  </Label>
+                </div>
               </div>
             </CardContent>
           </Card>
