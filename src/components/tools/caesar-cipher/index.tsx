@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import ToolsWrapper from "@/components/wrappers/ToolsWrapper";
 
@@ -38,6 +39,11 @@ export default function CaesarCipher() {
   // Compute encoded text
   const encoded = useMemo(() => {
     return caesarShift(inputText, shift);
+  }, [inputText, shift]);
+
+  // Compute decoded text (negative shift)
+  const decoded = useMemo(() => {
+    return caesarShift(inputText, -shift);
   }, [inputText, shift]);
 
   return (
@@ -105,26 +111,58 @@ export default function CaesarCipher() {
 
         {/* Results Section */}
         <div className="lg:col-span-2">
-          <Card>
-            <CardHeader>
-              <CardTitle>Encoded Text</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {inputText ? (
-                <div className="rounded-lg bg-gray-50 p-4 dark:bg-gray-900">
-                  <pre className="whitespace-pre-wrap break-words font-mono text-sm">
-                    {encoded}
-                  </pre>
-                </div>
-              ) : (
-                <div className="flex min-h-[200px] items-center justify-center rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-700">
-                  <p className="text-muted-foreground">
-                    Enter text to see encoded result
-                  </p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
+          <Tabs defaultValue="encode">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="encode">Encode</TabsTrigger>
+              <TabsTrigger value="decode">Decode</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="encode" className="mt-4">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Encoded Text</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {inputText ? (
+                    <div className="rounded-lg bg-gray-50 p-4 dark:bg-gray-900">
+                      <pre className="whitespace-pre-wrap break-words font-mono text-sm">
+                        {encoded}
+                      </pre>
+                    </div>
+                  ) : (
+                    <div className="flex min-h-[200px] items-center justify-center rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-700">
+                      <p className="text-muted-foreground">
+                        Enter text to see encoded result
+                      </p>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="decode" className="mt-4">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Decoded Text</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {inputText ? (
+                    <div className="rounded-lg bg-gray-50 p-4 dark:bg-gray-900">
+                      <pre className="whitespace-pre-wrap break-words font-mono text-sm">
+                        {decoded}
+                      </pre>
+                    </div>
+                  ) : (
+                    <div className="flex min-h-[200px] items-center justify-center rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-700">
+                      <p className="text-muted-foreground">
+                        Enter text to see decoded result
+                      </p>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </TabsContent>
+          </Tabs>
         </div>
       </div>
     </ToolsWrapper>
