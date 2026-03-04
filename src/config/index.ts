@@ -1808,4 +1808,44 @@ export const tools: ITool[] = [
         "clipboard image saver, paste image, screenshot tool, clipboard manager, save clipboard image, image format converter, clipboard history, image paste tool, screenshot saver, web image saver",
     },
   },
+  {
+    id: "caesar-cipher",
+    title: "Caesar Cipher Encoder/Decoder",
+    shortTitle: "Caesar Cipher",
+    description:
+      "Encode and decode text using the classic Caesar cipher with adjustable shift values",
+    icon: Shield,
+    color: "bg-rose-500",
+    category: "Security Tools",
+    tags: [
+      "caesar-cipher",
+      "cipher",
+      "cryptography",
+      "encode",
+      "decode",
+      "converter",
+      "conversion",
+      "encoding",
+      "decoding",
+      "text",
+      "shift",
+      "encryption",
+    ],
+    features: [
+      "Encode/Decode text with shift cipher",
+      "Adjustable shift amount (1-25)",
+      "Brute force decoder (try all shifts)",
+      "Preserve or remove non-alphabetic characters",
+      "Support for uppercase/lowercase",
+    ],
+    popular: true,
+    href: "/caesar-cipher",
+    seo: {
+      title: "Caesar Cipher Encoder/Decoder - Classic Shift Cipher Tool",
+      description:
+        "Encode and decode text using the classic Caesar cipher with adjustable shift values. Includes brute force decoder to crack encrypted messages.",
+      keywords:
+        "caesar cipher, shift cipher, cryptography, encode, decode, encryption, decryption, classical cipher, rot13",
+    },
+  },
 ];

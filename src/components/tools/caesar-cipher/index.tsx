@@ -1,0 +1,65 @@
+"use client";
+
+import React, { useState, useCallback, useMemo } from "react";
+
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+
+import ToolsWrapper from "@/components/wrappers/ToolsWrapper";
+
+export default function CaesarCipher() {
+  const [inputText, setInputText] = useState("");
+
+  return (
+    <ToolsWrapper>
+      <div className="space-y-2 text-center">
+        <h1 className="text-3xl font-bold">Caesar Cipher Encoder/Decoder</h1>
+        <p className="text-muted-foreground">
+          Encode and decode text using the classic Caesar cipher with adjustable
+          shift values
+        </p>
+      </div>
+
+      <div className="grid gap-6 lg:grid-cols-3">
+        {/* Input Section */}
+        <div className="lg:col-span-1">
+          <Card>
+            <CardHeader>
+              <CardTitle>Input</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="input-text">Text to Encode/Decode</Label>
+                <Textarea
+                  id="input-text"
+                  placeholder="Enter your text here..."
+                  value={inputText}
+                  onChange={(e) => setInputText(e.target.value)}
+                  rows={8}
+                  className="font-mono"
+                />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Results Section */}
+        <div className="lg:col-span-2">
+          <Card>
+            <CardHeader>
+              <CardTitle>Results</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex min-h-[200px] items-center justify-center rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-700">
+                <p className="text-muted-foreground">
+                  Results will appear here
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    </ToolsWrapper>
+  );
+}
