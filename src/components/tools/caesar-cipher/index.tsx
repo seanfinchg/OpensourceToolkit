@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
@@ -13,6 +13,32 @@ import ToolsWrapper from "@/components/wrappers/ToolsWrapper";
 export default function CaesarCipher() {
   const [inputText, setInputText] = useState("");
   const [shift, setShift] = useState(3);
+
+  // Caesar cipher encoding function
+  const caesarShift = (text: string, shiftAmount: number): string => {
+    if (!text) return "";
+
+    return text
+      .split("")
+      .map((char) => {
+        // Only shift letters
+        if (/[a-zA-Z]/.test(char)) {
+          const isUpper = char === char.toUpperCase();
+          const base = isUpper ? 65 : 97; // ASCII 'A' or 'a'
+          const charCode = char.charCodeAt(0);
+          const shifted = ((charCode - base + shiftAmount) % 26) + base;
+          return String.fromCharCode(shifted);
+        }
+        // Keep non-letters unchanged
+        return char;
+      })
+      .join("");
+  };
+
+  // Compute encoded text
+  const encoded = useMemo(() => {
+    return caesarShift(inputText, shift);
+  }, [inputText, shift]);
 
   return (
     <ToolsWrapper>
@@ -81,14 +107,22 @@ export default function CaesarCipher() {
         <div className="lg:col-span-2">
           <Card>
             <CardHeader>
-              <CardTitle>Results</CardTitle>
+              <CardTitle>Encoded Text</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="flex min-h-[200px] items-center justify-center rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-700">
-                <p className="text-muted-foreground">
-                  Results will appear here
-                </p>
-              </div>
+              {inputText ? (
+                <div className="rounded-lg bg-gray-50 p-4 dark:bg-gray-900">
+                  <pre className="whitespace-pre-wrap break-words font-mono text-sm">
+                    {encoded}
+                  </pre>
+                </div>
+              ) : (
+                <div className="flex min-h-[200px] items-center justify-center rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-700">
+                  <p className="text-muted-foreground">
+                    Enter text to see encoded result
+                  </p>
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>
