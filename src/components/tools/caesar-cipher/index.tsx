@@ -32,7 +32,8 @@ export default function CaesarCipher() {
           const isUpper = char === char.toUpperCase();
           const base = isUpper ? 65 : 97; // ASCII 'A' or 'a'
           const charCode = char.charCodeAt(0);
-          const shifted = ((charCode - base + shiftAmount) % 26) + base;
+          // Add 26 before modulo to handle negative shifts correctly
+          const shifted = ((charCode - base + shiftAmount + 26) % 26) + base;
           return String.fromCharCode(shifted);
         }
         // Keep non-letters unchanged
@@ -279,6 +280,70 @@ export default function CaesarCipher() {
           </Tabs>
         </div>
       </div>
+      <Card>
+        <CardHeader>
+          <CardTitle>About Caesar Cipher</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <div>
+              <h4 className="mb-2 font-semibold">How It Works</h4>
+              <ul className="space-y-1 text-sm text-muted-foreground">
+                <li>• Shifts each letter by a fixed number</li>
+                <li>• A = D, B = E, C = F (shift 3)</li>
+                <li>• Wraps around: X = A, Y = B, Z = C</li>
+                <li>• ROT13 is Caesar cipher with shift 13</li>
+                <li>• Case and punctuation preserved</li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="mb-2 font-semibold">Use Cases</h4>
+              <ul className="space-y-1 text-sm text-muted-foreground">
+                <li>• Educational cryptography learning</li>
+                <li>• Simple text obfuscation</li>
+                <li>• Puzzles and word games</li>
+                <li>• Historical cipher demonstrations</li>
+                <li>• ROT13 for spoiler protection</li>
+              </ul>
+            </div>
+          </div>
+          <div className="mt-6 border-t pt-4">
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+              <div>
+                <h4 className="mb-2 font-semibold">Security Best Practices</h4>
+                <div className="space-y-2 text-sm text-muted-foreground">
+                  <div>
+                    ⚠️ <strong>Not secure for real-world encryption</strong> -
+                    Caesar cipher is easily cracked with brute force
+                  </div>
+                  <div>• Only 25 possible keys (very weak)</div>
+                  <div>• Vulnerable to frequency analysis</div>
+                  <div>• Use for educational purposes only</div>
+                  <div>
+                    • For real security, use modern encryption (AES, RSA)
+                  </div>
+                </div>
+              </div>
+              <div>
+                <h4 className="mb-2 font-semibold">Historical Context</h4>
+                <div className="space-y-2 text-sm text-muted-foreground">
+                  <div>• Named after Julius Caesar (100 BC)</div>
+                  <div>• Used in Roman military communications</div>
+                  <div>• One of the oldest known ciphers</div>
+                  <div>• Foundation for modern cryptography</div>
+                  <div>• Still used in ROT13 for spoiler text</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="border-t pt-4">
+            <p className="text-sm text-muted-foreground">
+              All encryption happens locally in your browser. No data is sent to
+              external servers, ensuring complete privacy and security.
+            </p>
+          </div>
+        </CardContent>
+      </Card>
     </ToolsWrapper>
   );
 }
