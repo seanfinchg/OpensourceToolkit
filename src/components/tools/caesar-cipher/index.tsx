@@ -1,15 +1,18 @@
 "use client";
 
-import React, { useState, useCallback, useMemo } from "react";
+import React, { useState } from "react";
 
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
+import { Slider } from "@/components/ui/slider";
 
 import ToolsWrapper from "@/components/wrappers/ToolsWrapper";
 
 export default function CaesarCipher() {
   const [inputText, setInputText] = useState("");
+  const [shift, setShift] = useState(3);
 
   return (
     <ToolsWrapper>
@@ -38,6 +41,36 @@ export default function CaesarCipher() {
                   onChange={(e) => setInputText(e.target.value)}
                   rows={8}
                   className="font-mono"
+                />
+              </div>
+
+              {/* Shift Amount */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="shift">Shift Amount</Label>
+                  <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                    {shift}
+                  </span>
+                </div>
+                <Slider
+                  id="shift"
+                  min={1}
+                  max={25}
+                  step={1}
+                  value={[shift]}
+                  onValueChange={(value) => setShift(value[0])}
+                  className="w-full"
+                />
+                <Input
+                  type="number"
+                  min={1}
+                  max={25}
+                  value={shift}
+                  onChange={(e) => {
+                    const val = parseInt(e.target.value);
+                    if (val >= 1 && val <= 25) setShift(val);
+                  }}
+                  className="w-full"
                 />
               </div>
             </CardContent>
