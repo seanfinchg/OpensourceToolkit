@@ -1,12 +1,15 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useCallback } from "react";
+import { Copy, Check } from "lucide-react";
+import { toast } from "sonner";
 
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
+import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import ToolsWrapper from "@/components/wrappers/ToolsWrapper";
@@ -14,6 +17,8 @@ import ToolsWrapper from "@/components/wrappers/ToolsWrapper";
 export default function CaesarCipher() {
   const [inputText, setInputText] = useState("");
   const [shift, setShift] = useState(3);
+  const [copiedEncoded, setCopiedEncoded] = useState(false);
+  const [copiedDecoded, setCopiedDecoded] = useState(false);
 
   // Caesar cipher encoding function
   const caesarShift = (text: string, shiftAmount: number): string => {
@@ -45,6 +50,38 @@ export default function CaesarCipher() {
   const decoded = useMemo(() => {
     return caesarShift(inputText, -shift);
   }, [inputText, shift]);
+
+  // Brute force - generate all possible shifts
+  const bruteForceResults = useMemo(() => {
+    if (!inputText) return [];
+    return Array.from({ length: 25 }, (_, i) => {
+      const shiftAmount = i + 1;
+      return {
+        shift: shiftAmount,
+        result: caesarShift(inputText, -shiftAmount),
+      };
+    });
+  }, [inputText]);
+
+  // Copy to clipboard function
+  const copyToClipboard = useCallback(
+    async (text: string, type: "encoded" | "decoded" | "brute") => {
+      try {
+        await navigator.clipboard.writeText(text);
+        if (type === "encoded") {
+          setCopiedEncoded(true);
+          setTimeout(() => setCopiedEncoded(false), 2000);
+        } else if (type === "decoded") {
+          setCopiedDecoded(true);
+          setTimeout(() => setCopiedDecoded(false), 2000);
+        }
+        toast.success("Copied to clipboard");
+      } catch (err) {
+        toast.error("Failed to copy to clipboard");
+      }
+    },
+    [],
+  );
 
   return (
     <ToolsWrapper>
@@ -112,15 +149,29 @@ export default function CaesarCipher() {
         {/* Results Section */}
         <div className="lg:col-span-2">
           <Tabs defaultValue="encode">
-            <TabsList className="grid w-full grid-cols-2">
+            <TabsList className="grid w-full grid-cols-3">
               <TabsTrigger value="encode">Encode</TabsTrigger>
               <TabsTrigger value="decode">Decode</TabsTrigger>
+              <TabsTrigger value="brute">Brute Force</TabsTrigger>
             </TabsList>
 
             <TabsContent value="encode" className="mt-4">
               <Card>
-                <CardHeader>
+                <CardHeader className="flex flex-row items-center justify-between">
                   <CardTitle>Encoded Text</CardTitle>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => copyToClipboard(encoded, "encoded")}
+                    disabled={!encoded}
+                  >
+                    {copiedEncoded ? (
+                      <Check className="mr-2 h-4 w-4" />
+                    ) : (
+                      <Copy className="mr-2 h-4 w-4" />
+                    )}
+                    {copiedEncoded ? "Copied!" : "Copy"}
+                  </Button>
                 </CardHeader>
                 <CardContent>
                   {inputText ? (
@@ -142,8 +193,21 @@ export default function CaesarCipher() {
 
             <TabsContent value="decode" className="mt-4">
               <Card>
-                <CardHeader>
+                <CardHeader className="flex flex-row items-center justify-between">
                   <CardTitle>Decoded Text</CardTitle>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => copyToClipboard(decoded, "decoded")}
+                    disabled={!decoded}
+                  >
+                    {copiedDecoded ? (
+                      <Check className="mr-2 h-4 w-4" />
+                    ) : (
+                      <Copy className="mr-2 h-4 w-4" />
+                    )}
+                    {copiedDecoded ? "Copied!" : "Copy"}
+                  </Button>
                 </CardHeader>
                 <CardContent>
                   {inputText ? (
@@ -156,6 +220,56 @@ export default function CaesarCipher() {
                     <div className="flex min-h-[200px] items-center justify-center rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-700">
                       <p className="text-muted-foreground">
                         Enter text to see decoded result
+                      </p>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="brute" className="mt-4">
+              <Card>
+                <CardHeader>
+                  <CardTitle>All Possible Shifts</CardTitle>
+                  <p className="text-sm text-muted-foreground">
+                    Try all 25 possible shifts to crack the cipher
+                  </p>
+                </CardHeader>
+                <CardContent>
+                  {inputText ? (
+                    <div className="max-h-[600px] space-y-3 overflow-y-auto">
+                      {bruteForceResults.map(({ shift: shiftVal, result }) => (
+                        <div
+                          key={shiftVal}
+                          className="flex items-start gap-3 rounded-lg border bg-gray-50 p-3 dark:bg-gray-900"
+                        >
+                          <div className="flex min-w-[60px] flex-col items-center">
+                            <span className="text-xs font-medium text-muted-foreground">
+                              Shift
+                            </span>
+                            <span className="text-lg font-bold text-rose-600 dark:text-rose-400">
+                              {shiftVal}
+                            </span>
+                          </div>
+                          <div className="flex-1">
+                            <pre className="whitespace-pre-wrap break-words font-mono text-sm">
+                              {result}
+                            </pre>
+                          </div>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => copyToClipboard(result, "brute")}
+                          >
+                            <Copy className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="flex min-h-[200px] items-center justify-center rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-700">
+                      <p className="text-muted-foreground">
+                        Enter encrypted text to see all possible decodings
                       </p>
                     </div>
                   )}
